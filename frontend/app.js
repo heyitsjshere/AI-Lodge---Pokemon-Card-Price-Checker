@@ -8,6 +8,13 @@ const API_BASE_URL = window.location.hostname === 'localhost'
 // Debug: show configured API base URL in console so we can verify deployment wiring
 console.log('Configured API_BASE_URL =', API_BASE_URL);
 
+// Allow runtime override via meta tag (useful for Vercel preview URLs without rebuilding)
+const metaApi = document.querySelector('meta[name="api-base-url"]');
+if (metaApi && metaApi.content) {
+    console.log('Overriding API_BASE_URL from meta tag:', metaApi.content);
+    window.API_BASE_URL = metaApi.content;
+}
+
 // State
 let selectedFile = null;
 
