@@ -5,6 +5,9 @@ const API_BASE_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8000' 
     : 'https://pokemon-card-backend-0vqc.onrender.com';
 
+// Debug: show configured API base URL in console so we can verify deployment wiring
+console.log('Configured API_BASE_URL =', API_BASE_URL);
+
 // State
 let selectedFile = null;
 
@@ -265,14 +268,18 @@ function resetToUpload() {
     // Check API connectivity on load
     async function checkAPIConnection() {
         try {
+            console.log('Checking API connection to', API_BASE_URL + '/');
             const response = await fetch(`${API_BASE_URL}/`);
+            console.log('Health check response status:', response.status);
+            const bodyText = await response.text();
+            console.log('Health check response body:', bodyText);
             if (!response.ok) {
-                throw new Error('API not available');
+                throw new Error('API not available (status ' + response.status + ')');
             }
             console.log('✅ Connected to Pokemon Card Price Checker API');
         } catch (error) {
-            console.error('❌ Failed to connect to API. Make sure the backend is running at', API_BASE_URL);
-            showError('Cannot connect to the server. Please make sure the backend is running.');
+            console.error('❌ Failed to connect to API. Make sure the backend is running at', API_BASE_URL, error);
+            showError('Cannot connect to the server. Please make sure the backend is running. Check browser console for details.');
         }
     }
     
