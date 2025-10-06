@@ -1,5 +1,9 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000';
+// For local development, use: 'http://localhost:8000'
+// For production, use your Render backend URL
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : 'https://pokemon-card-price-checker.onrender.com'; // Replace with your actual Render URL
 
 // State
 let selectedFile = null;
