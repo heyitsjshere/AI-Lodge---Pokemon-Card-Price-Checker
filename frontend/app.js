@@ -1,19 +1,18 @@
 // API Configuration
 // For local development, use: 'http://localhost:8000'
 // For production, use your Render backend URL
-const API_BASE_URL = window.location.hostname === 'localhost' 
+let API_BASE_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:8000' 
     : 'https://pokemon-card-backend-0vqc.onrender.com';
-
-// Debug: show configured API base URL in console so we can verify deployment wiring
-console.log('Configured API_BASE_URL =', API_BASE_URL);
 
 // Allow runtime override via meta tag (useful for Vercel preview URLs without rebuilding)
 const metaApi = document.querySelector('meta[name="api-base-url"]');
 if (metaApi && metaApi.content) {
-    console.log('Overriding API_BASE_URL from meta tag:', metaApi.content);
-    window.API_BASE_URL = metaApi.content;
+    API_BASE_URL = metaApi.content;
 }
+
+// Debug: show configured API base URL in console so we can verify deployment wiring
+console.log('Configured API_BASE_URL =', API_BASE_URL);
 
 // State
 let selectedFile = null;
