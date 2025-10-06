@@ -147,19 +147,14 @@ async def check_price(file: UploadFile = File(...)):
             card_number=identification.get("card_number")
         )
         
-        if not card_details:
-            # Log the identification for debugging
-            logger.warning(f"Card not found in Pokemon TCG API. Identification: {identification}")
-            raise HTTPException(
-                status_code=404,
-                detail=f"Card '{identification.get('card_name')}' from '{identification.get('set_name')}' not found in database. The card was identified but may not exist in the Pokemon TCG database yet."
-            )
+        # Note: card_details will have fallback mock data if API is unavailable
         
-        # Step 3: Fetch prices from various sources
+        # Step 3: Fetch prices from various sources (pass card_details for real price extraction)
         prices = await price_service.get_prices(
             card_name=card_details.get("name"),
             card_id=card_details.get("id"),
-            set_name=card_details.get("set")
+            set_name=card_details.get("set"),
+            card_details=card_details  # Pass full card details for price extraction
         )
         
         return PriceCheckResponse(

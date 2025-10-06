@@ -22,7 +22,8 @@ class PriceService:
         self,
         card_name: str,
         card_id: str,
-        set_name: str
+        set_name: str,
+        card_details: Optional[Dict] = None
     ) -> Dict:
         """
         Aggregate prices from multiple sources
@@ -31,21 +32,29 @@ class PriceService:
             card_name: Name of the card
             card_id: Pokemon TCG API card ID
             set_name: Set name
+            card_details: Full card details from Pokemon TCG API (if available)
             
         Returns:
             Dictionary with aggregated price information
         """
         prices = []
         
-        # Get prices from different sources
-        tcgplayer_prices = await self._get_tcgplayer_prices(card_name, set_name)
-        prices.extend(tcgplayer_prices)
+        # If we have real card data from Pokemon TCG API, extract prices
+        if card_details and card_details.get("tcgplayer_url"):
+            tcg_prices = self._extract_tcgplayer_prices(card_details)
+            prices.extend(tcg_prices)
         
-        ebay_prices = await self._get_ebay_prices(card_name, set_name)
-        prices.extend(ebay_prices)
-        
-        cardmarket_prices = await self._get_cardmarket_prices(card_name, set_name)
-        prices.extend(cardmarket_prices)
+        # If we don't have real data, use mock prices
+        if not prices:
+            # Get prices from different sources (mock data)
+            tcgplayer_prices = await self._get_tcgplayer_prices(card_name, set_name)
+            prices.extend(tcgplayer_prices)
+            
+            ebay_prices = await self._get_ebay_prices(card_name, set_name)
+            prices.extend(ebay_prices)
+            
+            cardmarket_prices = await self._get_cardmarket_prices(card_name, set_name)
+            prices.extend(cardmarket_prices)
         
         # Calculate market price (average)
         market_price = None
@@ -63,6 +72,88 @@ class PriceService:
             "last_updated": datetime.now().isoformat(),
             "total_sources": len(prices)
         }
+    
+    def _extract_tcgplayer_prices(self, card_details: Dict) -> List[Dict]:
+        """
+        Extract real TCGPlayer prices from Pokemon TCG API card data
+        
+        Args:
+            card_details: Card details from Pokemon TCG API
+            
+        Returns:
+            List of price dictionaries
+        """
+        prices = []
+        
+        try:
+            tcgplayer_data = card_details.get("tcgplayer", {})
+            tcg_prices = tcgplayer_data.get("prices", {})
+            url = tcgplayer_data.get("url")
+            
+            # TCGPlayer has different price categories
+            if tcg_prices:
+                # Normal/Unlimited prices
+                if "normal" in tcg_prices:
+                    normal = tcg_prices["normal"]
+                    if "market" in normal and normal["market"]:
+                        prices.append({
+                            "source": "TCGPlayer",
+                            "price": round(float(normal["market"]), 2),
+                            "currency": "USD",
+                            "condition": "Near Mint",
+                            "url": url or f"https://www.tcgplayer.com",
+                            "in_stock": True,
+                            "seller": "TCGPlayer Market"
+                        })
+                
+                # Holofoil prices
+                if "holofoil" in tcg_prices:
+                    holo = tcg_prices["holofoil"]
+                    if "market" in holo and holo["market"]:
+                        prices.append({
+                            "source": "TCGPlayer",
+                            "price": round(float(holo["market"]), 2),
+                            "currency": "USD",
+                            "condition": "Near Mint (Holofoil)",
+                            "url": url or f"https://www.tcgplayer.com",
+                            "in_stock": True,
+                            "seller": "TCGPlayer Market"
+                        })
+                
+                # Reverse Holofoil prices
+                if "reverseHolofoil" in tcg_prices:
+                    reverse = tcg_prices["reverseHolofoil"]
+                    if "market" in reverse and reverse["market"]:
+                        prices.append({
+                            "source": "TCGPlayer",
+                            "price": round(float(reverse["market"]), 2),
+                            "currency": "USD",
+                            "condition": "Near Mint (Reverse Holo)",
+                            "url": url or f"https://www.tcgplayer.com",
+                            "in_stock": True,
+                            "seller": "TCGPlayer Market"
+                        })
+                
+                # 1st Edition prices
+                if "1stEdition" in tcg_prices:
+                    first_ed = tcg_prices["1stEdition"]
+                    if "market" in first_ed and first_ed["market"]:
+                        prices.append({
+                            "source": "TCGPlayer",
+                            "price": round(float(first_ed["market"]), 2),
+                            "currency": "USD",
+                            "condition": "Near Mint (1st Edition)",
+                            "url": url or f"https://www.tcgplayer.com",
+                            "in_stock": True,
+                            "seller": "TCGPlayer Market"
+                        })
+            
+            logger.info(f"Extracted {len(prices)} real prices from Pokemon TCG API")
+            
+        except Exception as e:
+            logger.error(f"Error extracting TCGPlayer prices from card data: {str(e)}")
+        
+        return prices
     
     async def _get_tcgplayer_prices(self, card_name: str, set_name: str) -> List[Dict]:
         """

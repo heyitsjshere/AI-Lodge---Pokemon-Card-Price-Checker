@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Card Price Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pokemon Card Price Checker</h1>
+            <p class="subtitle">Upload a Pokemon card image to identify and check prices</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-box" id="uploadBox">
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">🃏</div>
+                        <h2>Upload Pokemon Card</h2>
+                        <p>Click to select or drag and drop an image</p>
+                        <p class="file-info">Supports: JPG, PNG, JPEG</p>
+                        <button class="btn btn-primary" id="selectFileBtn">Select Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section hidden" id="previewSection">
+                <div class="preview-box">
+                    <img id="previewImage" src="" alt="Card Preview">
+                    <div class="preview-actions">
+                        <button class="btn btn-primary" id="analyzeBtn">
+                            <span class="btn-text">Analyze Card</span>
+                            <span class="btn-loader hidden">Analyzing...</span>
+                        </button>
+                        <button class="btn btn-secondary" id="changeImageBtn">Change Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div class="loading-section hidden" id="loadingSection">
+                <div class="loader"></div>
+                <p>Analyzing your Pokemon card...</p>
+                <p class="loading-subtext">This may take a few seconds</p>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section hidden" id="resultsSection">
+                <div class="results-header">
+                    <h2>Card Identified! ✅</h2>
+                    <button class="btn btn-secondary" id="newSearchBtn">Check Another Card</button>
+                </div>
+
+                <div class="card-details">
+                    <div class="card-image-container">
+                        <img id="resultCardImage" src="" alt="Card Image">
+                    </div>
+                    
+                    <div class="card-info">
+                        <h3 id="cardName">-</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Set:</span>
+                                <span class="info-value" id="cardSet">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Number:</span>
+                                <span class="info-value" id="cardNumber">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Rarity:</span>
+                                <span class="info-value" id="cardRarity">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Card ID:</span>
+                                <span class="info-value" id="cardId">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="price-section">
+                    <div class="market-price">
+                        <h3>Market Price</h3>
+                        <div class="price-value" id="marketPrice">$0.00</div>
+                        <div class="price-trend" id="priceTrend">
+                            <span class="trend-badge">stable</span>
+                        </div>
+                    </div>
+
+                    <div class="price-listings">
+                        <h3>Where to Buy</h3>
+                        <div id="priceList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <div class="error-section hidden" id="errorSection">
+                <div class="error-icon">⚠️</div>
+                <h3>Oops! Something went wrong</h3>
+                <p id="errorMessage">Unable to identify the card. Please try again.</p>
+                <button class="btn btn-primary" id="retryBtn">Try Again</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by OpenAI GPT-4 Vision & Pokemon TCG API</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
