@@ -1,0 +1,33 @@
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.12
+
+# HTTP Requests
+httpx==0.25.1
+requests==2.31.0
+
+# OpenAI API
+openai==1.54.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Data Validation
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# Image Processing
+Pillow==10.4.0
+
+# Utilities
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Logging
+colorlog==6.8.0
+
+# Testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.1
